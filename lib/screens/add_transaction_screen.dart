@@ -11,16 +11,16 @@ class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
 
   @override
-  _AddTransactionScreenState createState() => _AddTransactionScreenState();
+  AddTransactionScreenState createState() => AddTransactionScreenState();
 }
 
-class _AddTransactionScreenState extends State<AddTransactionScreen> {
+class AddTransactionScreenState extends State<AddTransactionScreen> {
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
   String? _selectedCategoryId;
   String? _selectedAccountId;
   bool _isExpense = true;
-  DateTime _selectedDate = DateTime.now();
+  final DateTime _selectedDate = DateTime.now();
 
   Future<void> _submitData() async {
     final enteredAmount = double.tryParse(_amountController.text);
@@ -48,8 +48,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     try {
       await firestoreService.addTransaction(userId, newTx);
+      if (!mounted) return;
       Navigator.of(context).pop(); // Đóng màn hình
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
     }
   }

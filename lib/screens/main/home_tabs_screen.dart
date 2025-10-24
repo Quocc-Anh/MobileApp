@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package-provider/provider.dart';
+import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
 import 'dashboard_tab.dart';
 import 'reports_tab.dart';
@@ -66,7 +66,7 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 6.0,
-        child: Container(
+        child: SizedBox(
           height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

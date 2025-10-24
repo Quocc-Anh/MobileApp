@@ -15,8 +15,7 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       return result.user;
     } catch (e) {
-      print(e);
-      return null;
+      throw Exception('Đăng nhập thất bại: $e');
     }
   }
 
@@ -26,8 +25,7 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       return result.user;
     } catch (e) {
-      print(e);
-      return null;
+      throw Exception('Đăng ký thất bại: $e');
     }
   }
 

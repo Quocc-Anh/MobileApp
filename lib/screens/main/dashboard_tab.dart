@@ -15,7 +15,7 @@ class DashboardTab extends StatelessWidget {
     final userId = authService.currentUserId;
 
     // Định dạng tiền tệ
-    final oCcy = new NumberFormat("#,##0", "vi_VN");
+    final oCcy = NumberFormat("#,##0", "vi_VN");
 
     if (userId == null) {
       return Center(child: Text('Lỗi: Không tìm thấy người dùng.'));

@@ -6,10 +6,10 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLogin = true; // Chuyển đổi giữa Đăng nhập và Đăng ký
@@ -64,10 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text(_isLogin ? 'Đăng Nhập' : 'Đăng Ký'),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
                 ),
+                child: Text(_isLogin ? 'Đăng Nhập' : 'Đăng Ký'),
               ),
               TextButton(
                 onPressed: () {
