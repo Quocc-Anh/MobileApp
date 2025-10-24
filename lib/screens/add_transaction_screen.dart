@@ -94,7 +94,7 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 return DropdownButtonFormField<String>(
-                  value: _selectedCategoryId,
+                  initialValue: _selectedCategoryId,
                   hint: Text('Chọn Danh mục'),
                   items: snapshot.data!.map((cat) {
                     return DropdownMenuItem(value: cat.id, child: Text(cat.name));
@@ -110,7 +110,7 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 return DropdownButtonFormField<String>(
-                  value: _selectedAccountId,
+                  initialValue: _selectedAccountId,
                   hint: Text('Chọn Tài khoản'),
                   items: snapshot.data!.map((acc) {
                     return DropdownMenuItem(value: acc.id, child: Text(acc.name));

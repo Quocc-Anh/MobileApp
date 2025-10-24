@@ -10,10 +10,10 @@ class HomeTabsScreen extends StatefulWidget {
   const HomeTabsScreen({super.key});
 
   @override
-  _HomeTabsScreenState createState() => _HomeTabsScreenState();
+  HomeTabsScreenState createState() => HomeTabsScreenState();
 }
 
-class _HomeTabsScreenState extends State<HomeTabsScreen> {
+class HomeTabsScreenState extends State<HomeTabsScreen> {
   int _selectedIndex = 0; // Tab hiện tại
 
   // Danh sách các Tab

@@ -81,7 +81,7 @@ class DashboardTab extends StatelessWidget {
                     title: Text(tx.note.isEmpty ? 'Giao dịch' : tx.note),
                     subtitle: Text(DateFormat.yMd('vi_VN').format(tx.date)),
                     trailing: Text(
-                      '${oCcy.format(tx.amount)}',
+                      oCcy.format(tx.amount),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isExpense ? Colors.red : Colors.green,
