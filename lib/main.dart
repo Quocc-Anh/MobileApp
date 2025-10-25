@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -43,8 +44,22 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Quản lý Chi tiêu',
         theme: ThemeData(
-          primarySwatch: Colors.teal,
-          scaffoldBackgroundColor: Colors.grey[50],
+          useMaterial3: true, // <-- Bật Material 3
+          colorSchemeSeed: Colors.teal, // <-- Chọn màu chủ đạo
+          brightness: Brightness.light,
+          // Áp dụng font chữ mới cho toàn app
+          textTheme: GoogleFonts.interTextTheme(
+            Theme.of(context).textTheme,
+          ),
+        ),
+
+        darkTheme: ThemeData( // <-- (Tùy chọn) Thêm theme tối
+          useMaterial3: true,
+          colorSchemeSeed: Colors.teal,
+          brightness: Brightness.dark,
+          textTheme: GoogleFonts.interTextTheme(
+            Theme.of(context).textTheme.apply(bodyColor: Colors.white),
+          ),
         ),
         debugShowCheckedModeBanner: false,
         // AuthWrapper sẽ quyết định hiển thị màn hình Đăng nhập hay Trang chủ
