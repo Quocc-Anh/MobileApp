@@ -14,6 +14,7 @@ class ManagementTab extends StatelessWidget {
   const ManagementTab({super.key});
 
   Widget _buildSectionTitle(BuildContext context, String title) {
+    // ... (Giữ nguyên hàm này)
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
@@ -27,9 +28,9 @@ class ManagementTab extends StatelessWidget {
   }
 
   Future<void> _showAddCategoryDialog(BuildContext context, FirestoreService firestoreService, String userId) async {
+    // ... (Giữ nguyên hàm này)
     final nameController = TextEditingController();
 
-    // (Giữ nguyên hàm này)
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -59,28 +60,27 @@ class ManagementTab extends StatelessWidget {
   }
 
   Future<void> _showAddAccountDialog(BuildContext context, FirestoreService firestoreService, String userId) async {
+    // ... (Giữ nguyên hàm này)
     final nameController = TextEditingController();
     final balanceController = TextEditingController();
-    // Thêm FormKey để validation
     final _formKey = GlobalKey<FormState>();
 
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Thêm tài khoản mới'),
-        // Bọc trong Form
         content: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField( // Dùng TextFormField
+              TextFormField(
                 controller: nameController,
                 autofocus: true,
                 decoration: InputDecoration(labelText: 'Tên tài khoản'),
                 validator: (value) => (value == null || value.isEmpty) ? 'Không được bỏ trống' : null,
               ),
-              TextFormField( // Dùng TextFormField
+              TextFormField(
                 controller: balanceController,
                 decoration: InputDecoration(labelText: 'Số dư ban đầu'),
                 keyboardType: TextInputType.number,
@@ -97,7 +97,6 @@ class ManagementTab extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              // Thêm validation
               if (_formKey.currentState!.validate()) {
                 final balance = double.tryParse(balanceController.text) ?? 0;
                 firestoreService.addAccount(userId, nameController.text, balance);
@@ -111,13 +110,12 @@ class ManagementTab extends StatelessWidget {
     );
   }
 
-  // --- HÀM MỚI: HIỂN THỊ DIALOG THÊM NGÂN SÁCH ---
   Future<void> _showAddBudgetDialog(BuildContext context, FirestoreService service, String userId) async {
+    // ... (Giữ nguyên hàm này)
     final amountController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
     String? _selectedCategoryId;
 
-    // Phải dùng StatefulBuilder vì Dialog cần quản lý state của riêng nó (giá trị dropdown)
     return showDialog<void>(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -129,24 +127,21 @@ class ManagementTab extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Dropdown để chọn Danh mục
                   StreamBuilder<List<Category>>(
                     stream: service.getCategoriesStream(userId),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return CircularProgressIndicator();
-                      // Lọc bỏ danh mục "Thu nhập" (nếu có)
                       final categories = snapshot.data!
                           .where((cat) => cat.name.toLowerCase() != 'thu nhập')
                           .toList();
                       return DropdownButtonFormField<String>(
-                        // Sửa: Dùng 'value' thay vì 'initialValue' để state hoạt động
                         value: _selectedCategoryId,
                         hint: Text('Chọn danh mục chi tiêu'),
                         items: categories.map((cat) {
                           return DropdownMenuItem(value: cat.id, child: Text(cat.name));
                         }).toList(),
                         onChanged: (val) {
-                          setDialogState(() { // Cập nhật state của Dialog
+                          setDialogState(() {
                             _selectedCategoryId = val;
                           });
                         },
@@ -155,7 +150,6 @@ class ManagementTab extends StatelessWidget {
                       );
                     },
                   ),
-                  // Ô nhập Hạn mức
                   TextFormField(
                     controller: amountController,
                     decoration: InputDecoration(labelText: 'Hạn mức chi tiêu'),
@@ -177,15 +171,14 @@ class ManagementTab extends StatelessWidget {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final double amount = double.tryParse(amountController.text) ?? 0.0;
-                    // Lấy ngày đầu tiên của tháng hiện tại
                     final now = DateTime.now();
                     final firstDayOfMonth = DateTime(now.year, now.month, 1);
 
                     final newBudget = Budget(
-                      id: '', // Firestore sẽ tự tạo
+                      id: '',
                       categoryId: _selectedCategoryId!,
                       amountLimit: amount,
-                      date: Timestamp.fromDate(firstDayOfMonth), // Lưu ngày đầu tháng
+                      date: Timestamp.fromDate(firstDayOfMonth),
                     );
 
                     service.addBudget(userId, newBudget);
@@ -199,7 +192,6 @@ class ManagementTab extends StatelessWidget {
       ),
     );
   }
-  // --- KẾT THÚC HÀM MỚI ---
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +217,7 @@ class ManagementTab extends StatelessWidget {
         ),
         SizedBox(height: 16),
 
-        // --- 1. QUẢN LÝ DANH MỤC (Cốt lõi 2) ---
+        // --- 1. QUẢN LÝ DANH MỤC (Giữ nguyên) ---
         _buildSectionTitle(context, 'Quản lý Danh mục'),
         StreamBuilder<List<Category>>(
           stream: firestoreService.getCategoriesStream(userId),
@@ -279,12 +271,11 @@ class ManagementTab extends StatelessWidget {
         ),
         Divider(height: 30),
 
-        // --- 2. QUẢN LÝ TÀI KHOẢN (Quan trọng 1) ---
+        // --- 2. QUẢN LÝ TÀI KHOẢN (ĐÃ KÍCH HOẠT NÚT XÓA) ---
         _buildSectionTitle(context, 'Quản lý Tài khoản'),
         StreamBuilder<List<Account>>(
           stream: firestoreService.getAccountsStream(userId),
           builder: (context, snapshot) {
-            // (Code hiển thị tài khoản giữ nguyên)
             if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
             final accounts = snapshot.data!;
             return Column(
@@ -295,11 +286,33 @@ class ManagementTab extends StatelessWidget {
                   subtitle: Text('Số dư ban đầu: ${oCcy.format(acc.initialBalance)} VNĐ'),
                   trailing: IconButton(
                     icon: Icon(Icons.delete_outline, color: Colors.red[300]),
+                    // --- BẮT ĐẦU KÍCH HOẠT ---
                     onPressed: () {
-                      // (Bạn có thể thêm hàm deleteAccount vào firestore_service.dart
-                      // và kích hoạt nút này tương tự như deleteCategory)
-                      // firestoreService.deleteAccount(userId, acc.id);
+                      // Thêm dialog xác nhận trước khi xóa
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('Xác nhận xóa'),
+                          content: Text('Bạn có chắc muốn xóa tài khoản "${acc.name}"? Việc này có thể ảnh hưởng đến tính toán số dư nếu có giao dịch liên quan.'),
+                          actions: [
+                            TextButton(
+                              child: Text('Hủy'),
+                              onPressed: () => Navigator.of(ctx).pop(),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(foregroundColor: Colors.red),
+                              child: Text('Xóa'),
+                              onPressed: () {
+                                // Gọi hàm service (bạn đã thêm ở bước trước)
+                                firestoreService.deleteAccount(userId, acc.id);
+                                Navigator.of(ctx).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
+                    // --- KẾT THÚC KÍCH HOẠT ---
                   ),
                 )),
                 Divider(),
@@ -316,15 +329,12 @@ class ManagementTab extends StatelessWidget {
         ),
         Divider(height: 30),
 
-        // --- 3. QUẢN LÝ NGÂN SÁCH (ĐÃ SỬA LỖI) ---
+        // --- 3. QUẢN LÝ NGÂN SÁCH (Giữ nguyên) ---
         _buildSectionTitle(context, 'Quản lý Ngân sách'),
-        // LỒNG 2 STREAMBUILDER: 1 để lấy Danh mục, 2 để lấy Ngân sách
         StreamBuilder<List<Category>>(
             stream: firestoreService.getCategoriesStream(userId),
             builder: (context, catSnapshot) {
               if (!catSnapshot.hasData) return Center(child: CircularProgressIndicator());
-
-              // Tạo Map để tra cứu tên: {'cat_id_1': 'Ăn uống', ...}
               final categoryMap = {for (var cat in catSnapshot.data!) cat.id: cat.name};
 
               return StreamBuilder<List<Budget>>(
@@ -333,25 +343,20 @@ class ManagementTab extends StatelessWidget {
                   if (!budgetSnapshot.hasData) return Center(child: CircularProgressIndicator());
                   final budgets = budgetSnapshot.data!;
 
-                  // LỖI CỦA BẠN ĐÃ ĐƯỢC DI CHUYỂN VÀO ĐÚNG CHỖ
-
                   return Column(
                     children: [
-                      ...budgets.map((budget) { // <-- 'budget' được định nghĩa ở đây
-                        // Tra cứu tên từ Map
-                        final categoryName = categoryMap[budget.categoryId] ?? 'Không rõ'; // <-- Giờ 'categoryMap' và 'budget' đã tồn tại
-
+                      ...budgets.map((budget) {
+                        final categoryName = categoryMap[budget.categoryId] ?? 'Không rõ';
                         return ListTile(
                           leading: Icon(Icons.pie_chart_outline),
                           title: Text('Hạn mức: ${oCcy.format(budget.amountLimit)} VNĐ'),
                           subtitle: Text(
-                            'Danh mục: $categoryName', // Hiển thị tên
+                            'Danh mục: $categoryName',
                             style: TextStyle(color: Theme.of(context).colorScheme.primary),
                           ),
                           trailing: IconButton(
                             icon: Icon(Icons.delete_outline, color: Colors.red[300]),
                             onPressed: () {
-                              // (Code xóa ngân sách đã kích hoạt)
                               showDialog(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
@@ -382,7 +387,6 @@ class ManagementTab extends StatelessWidget {
                         leading: Icon(Icons.add, color: Colors.teal),
                         title: Text('Thêm ngân sách mới'),
                         onTap: () {
-                          // (Code thêm ngân sách đã kích hoạt)
                           _showAddBudgetDialog(context, firestoreService, userId);
                         },
                       ),

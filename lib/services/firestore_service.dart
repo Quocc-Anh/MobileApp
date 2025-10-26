@@ -109,7 +109,10 @@ class FirestoreService {
   Future<void> deleteBudget(String userId, String budgetId) {
     return _budgetsRef(userId).doc(budgetId).delete();
   }
-  // -----------------------------
+
+  Future<void> deleteAccount(String userId, String accountId) {
+    return _accountsRef(userId).doc(accountId).delete();
+  }
 
   // --- 6. HÀM TẠO DỮ LIỆU MẶC ĐỊNH (PHẦN MỚI THÊM) ---
 
@@ -138,6 +141,8 @@ class FirestoreService {
     CollectionReference accountsRef = _accountsRef(userId);
     batch.set(accountsRef.doc(), {'name': 'Tiền mặt', 'initialBalance': 0});
     batch.set(accountsRef.doc(), {'name': 'Ngân hàng', 'initialBalance': 0});
+
+
 
     // 3. Commit (gửi) tất cả thay đổi lên server
     await batch.commit();

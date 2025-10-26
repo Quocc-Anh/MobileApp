@@ -38,36 +38,37 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Trang chủ'),
-        // --- HOÀN NGUYÊN 1: Xóa actions khỏi AppBar ---
-        actions: [],
+        // --- THÊM NÚT "+" VÀO ACTIONS ---
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add_circle_outline), // Icon Add
+            tooltip: 'Thêm giao dịch mới', // Chú thích khi hover
+            onPressed: () {
+              // Logic điều hướng giữ nguyên như FAB cũ
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AddTransactionScreen(),
+                  fullscreenDialog: true,
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      // --- HOÀN NGUYÊN 2: Thêm lại FAB và vị trí ---
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AddTransactionScreen(),
-              fullscreenDialog: true,
-            ),
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // --- KẾT THÚC HOÀN NGUYÊN 2 ---
+      // --- XÓA FAB VÀ VỊ TRÍ CỦA NÓ ---
+      // floatingActionButton: FloatingActionButton(...)
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // --- BottomAppBar giữ nguyên bố cục 5 tab với khoảng trống ---
+      // --- BottomAppBar đã được cập nhật ---
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        notchMargin: 8.0,
+        // Bỏ shape và notchMargin
         child: SizedBox(
           height: 60,
-          // Dùng một Row duy nhất và spaceAround
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround, // Phân bổ đều
+            mainAxisAlignment: MainAxisAlignment.spaceAround, // Phân bổ đều 5 tab
             children: <Widget>[
               // Tab 0
               _buildBottomNavItem(
@@ -83,8 +84,6 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
                 label: 'Báo cáo',
                 index: 1,
               ),
-              // Khoảng trống cho FAB
-              SizedBox(width: 40), // Điều chỉnh chiều rộng nếu cần
               // Tab 2 (Ngân sách)
               _buildBottomNavItem(
                 context,
@@ -106,6 +105,7 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
                 label: 'Cài đặt',
                 index: 4,
               ),
+              // Đã xóa SizedBox trống
             ],
           ),
         ),
