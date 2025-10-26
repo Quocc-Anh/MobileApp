@@ -7,21 +7,12 @@ import '../models/budget.dart';
 /*
  * ===================================================================
  * DỊCH VỤ FIRESTORE (firestore_service.dart)
- * * Đây là lớp "bộ não" CSDL của bạn.
- * Nó chứa TẤT CẢ logic để Ghi, Đọc, Cập nhật, và Xóa
- * dữ liệu từ Cloud Firestore.
- * * Bằng cách tập trung logic ở đây, các file Giao diện (Screens)
- * của bạn sẽ rất gọn gàng và chỉ cần gọi các hàm như:
- * - firestoreService.addTransaction(...)
- * - firestoreService.getCategoriesStream(...)
  * ===================================================================
 */
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // --- 1. ĐƯỜNG DẪN HELPER ---
-  // Các hàm private này giúp code gọn gàng hơn
-  // Chúng trỏ đến các "collection con" của một người dùng cụ thể.
 
   /// Trỏ đến collection: /users/{userId}/transactions
   CollectionReference _transactionsRef(String userId) {
@@ -44,16 +35,12 @@ class FirestoreService {
   }
 
   // --- 2. TRANSACTIONS (Giao dịch) ---
-  // (Chức năng Cốt lõi 1 & 3)
 
-  /// Lấy một Stream (luồng dữ liệu) real-time của tất cả giao dịch.
-  /// UI sẽ tự động cập nhật khi có giao dịch mới.
   Stream<List<MyTransaction>> getTransactionsStream(String userId) {
     return _transactionsRef(userId)
-        .orderBy('date', descending: true) // Sắp xếp mới nhất lên đầu
-        .snapshots() // .snapshots() nghĩa là "lắng nghe real-time"
+        .orderBy('date', descending: true)
+        .snapshots()
         .map((snapshot) {
-      // Chuyển đổi dữ liệu thô (QuerySnapshot) thành một List<MyTransaction>
       return snapshot.docs.map((doc) {
         return MyTransaction.fromJson(
             doc.id, doc.data() as Map<String, dynamic>);
@@ -61,18 +48,12 @@ class FirestoreService {
     });
   }
 
-  /// Thêm một giao dịch mới vào CSDL.
   Future<void> addTransaction(String userId, MyTransaction tx) {
-    // Firestore sẽ tự tạo ID khi dùng .add()
     return _transactionsRef(userId).add(tx.toJson());
   }
 
-  // (Bạn có thể tự thêm hàm updateTransaction và deleteTransaction ở đây)
-
   // --- 3. CATEGORIES (Danh mục) ---
-  // (Chức năng Cốt lõi 2)
 
-  /// Lấy Stream real-time của tất cả danh mục.
   Stream<List<Category>> getCategoriesStream(String userId) {
     return _categoriesRef(userId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -81,25 +62,16 @@ class FirestoreService {
     });
   }
 
-  /// Thêm một danh mục mới.
   Future<void> addCategory(String userId, String name) {
     return _categoriesRef(userId).add({'name': name});
   }
 
-  // --- PHẦN ĐƯỢC THÊM VÀO ---
-  /// Xóa một danh mục dựa trên ID của nó.
   Future<void> deleteCategory(String userId, String categoryId) {
     return _categoriesRef(userId).doc(categoryId).delete();
   }
-  // -----------------------------
-
-  // (Bạn có thể tự thêm hàm updateCategory ở đây)
-
 
   // --- 4. ACCOUNTS (Tài khoản/Ví) ---
-  // (Chức năng Quan trọng 1)
 
-  /// Lấy Stream real-time của tất cả tài khoản.
   Stream<List<Account>> getAccountsStream(String userId) {
     return _accountsRef(userId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -108,7 +80,6 @@ class FirestoreService {
     });
   }
 
-  /// Thêm một tài khoản mới.
   Future<void> addAccount(String userId, String name, double initialBalance) {
     return _accountsRef(userId).add({
       'name': name,
@@ -116,15 +87,11 @@ class FirestoreService {
     });
   }
 
-  // (Bạn có thể tự thêm hàm updateAccount và deleteAccount ở đây)
-
   // --- 5. BUDGETS (Ngân sách) ---
-  // (Chức năng Quan trọng 3) - ĐÃ THÊM MỚI
 
-  /// Lấy Stream real-time của tất cả ngân sách.
   Stream<List<Budget>> getBudgetsStream(String userId) {
     return _budgetsRef(userId)
-        .orderBy('date', descending: true) // Sắp xếp theo tháng
+        .orderBy('date', descending: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -133,12 +100,39 @@ class FirestoreService {
     });
   }
 
-  /// Thêm một ngân sách mới.
   Future<void> addBudget(String userId, Budget budget) {
-    // Chúng ta dùng budget.toJson() đã định nghĩa trong model
     return _budgetsRef(userId).add(budget.toJson());
   }
 
-// (Bạn có thể tự thêm hàm updateBudget và deleteBudget ở đây)
+  // --- 6. HÀM TẠO DỮ LIỆU MẶC ĐỊNH (PHẦN MỚI THÊM) ---
 
+  /// Hàm public để tạo dữ liệu mặc định (Danh mục, Tài khoản) cho người dùng mới
+  Future<void> createDefaultUserData(String userId) async {
+    // 1. Tạo các danh mục mặc định
+    List<String> defaultCategories = [
+      'Học tập',
+      'Mua sắm',
+      'Ăn uống',
+      'Du lịch',
+      'Tiết kiệm'
+    ];
+
+    // Dùng Batch Write để thêm tất cả 1 lần
+    WriteBatch batch = _db.batch();
+
+    CollectionReference categoriesRef = _categoriesRef(userId);
+
+    for (String categoryName in defaultCategories) {
+      DocumentReference docRef = categoriesRef.doc();
+      batch.set(docRef, {'name': categoryName});
+    }
+
+    // 2. Tạo 2 tài khoản mặc định (Tiền mặt, Ngân hàng)
+    CollectionReference accountsRef = _accountsRef(userId);
+    batch.set(accountsRef.doc(), {'name': 'Tiền mặt', 'initialBalance': 0});
+    batch.set(accountsRef.doc(), {'name': 'Ngân hàng', 'initialBalance': 0});
+
+    // 3. Commit (gửi) tất cả thay đổi lên server
+    await batch.commit();
+  }
 }

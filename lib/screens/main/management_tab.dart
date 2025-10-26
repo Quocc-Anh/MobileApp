@@ -26,7 +26,7 @@ class ManagementTab extends StatelessWidget {
 
   Future<void> _showAddCategoryDialog(BuildContext context, FirestoreService firestoreService, String userId) async {
     final nameController = TextEditingController();
-    
+
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -57,7 +57,7 @@ class ManagementTab extends StatelessWidget {
   Future<void> _showAddAccountDialog(BuildContext context, FirestoreService firestoreService, String userId) async {
     final nameController = TextEditingController();
     final balanceController = TextEditingController();
-    
+
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -113,117 +113,144 @@ class ManagementTab extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.all(8),
       children: [
-      Text(
-      'Quản lý',
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-      textAlign: TextAlign.center,
-    ),
-    SizedBox(height: 16),
+        Text(
+          'Quản lý',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 16),
 
-    // --- 1. QUẢN LÝ DANH MỤC (Cốt lõi 2) ---
-    _buildSectionTitle(context, 'Quản lý Danh mục'),
-    StreamBuilder<List<Category>>(
-    stream: firestoreService.getCategoriesStream(userId),
-    builder: (context, snapshot) {
-    if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-    final categories = snapshot.data!;
-    return Column(
-    children: [
-    ...categories.map((cat) => ListTile(
-    leading: Icon(Icons.category_outlined),
-    title: Text(cat.name),
-    trailing: IconButton(
-    icon: Icon(Icons.delete_outline, color: Colors.red[300]),
-    onPressed: () {
-    // (Bạn cần thêm hàm deleteCategory vào firestore_service.dart)
-    // firestoreService.deleteCategory(userId, cat.id);
-    },
-    ),
-    )),
-    Divider(),
-    ListTile(
-    leading: Icon(Icons.add, color: Colors.teal),
-    title: Text('Thêm danh mục mới'),
-    onTap: () {
-    _showAddCategoryDialog(context, firestoreService, userId);
-    },
-    ),
-    ],
-    );
-    },
-    ),
-    Divider(height: 30),
+        // --- 1. QUẢN LÝ DANH MỤC (Cốt lõi 2) ---
+        _buildSectionTitle(context, 'Quản lý Danh mục'),
+        StreamBuilder<List<Category>>(
+          stream: firestoreService.getCategoriesStream(userId),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+            final categories = snapshot.data!;
+            return Column(
+              children: [
+                ...categories.map((cat) => ListTile(
+                  leading: Icon(Icons.category_outlined),
+                  title: Text(cat.name),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.red[300]),
 
-    // --- 2. QUẢN LÝ TÀI KHOẢN (Quan trọng 1) ---
-    _buildSectionTitle(context, 'Quản lý Tài khoản'),
-    StreamBuilder<List<Account>>(
-    stream: firestoreService.getAccountsStream(userId),
-    builder: (context, snapshot) {
-    if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-    final accounts = snapshot.data!;
-    return Column(
-    children: [
-    ...accounts.map((acc) => ListTile(
-    leading: Icon(Icons.account_balance_wallet_outlined),
-    title: Text(acc.name),
-    subtitle: Text('Số dư ban đầu: ${oCcy.format(acc.initialBalance)} VNĐ'),
-    trailing: IconButton(
-    icon: Icon(Icons.delete_outline, color: Colors.red[300]),
-    onPressed: () {
-    // (Bạn cần thêm hàm deleteAccount vào firestore_service.dart)
-    // firestoreService.deleteAccount(userId, acc.id);
-    },
-    ),
-    )),
-    Divider(),
-    ListTile(
-    leading: Icon(Icons.add, color: Colors.teal),
-    title: Text('Thêm tài khoản mới'),
-    onTap: () {
-    _showAddAccountDialog(context, firestoreService, userId);
-    },
-    ),
-    ],
-    );
-    },
-    ),
-    Divider(height: 30),
+                    // --- PHẦN ĐÃ KÍCH HOẠT ---
+                    onPressed: () {
+                      // Thêm dialog xác nhận trước khi xóa
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('Xác nhận xóa'),
+                          content: Text('Bạn có chắc muốn xóa danh mục "${cat.name}"?'),
+                          actions: [
+                            TextButton(
+                              child: Text('Hủy'),
+                              onPressed: () => Navigator.of(ctx).pop(),
+                            ),
+                            TextButton(
+                              // Thêm màu đỏ cho nút Xóa
+                              style: TextButton.styleFrom(foregroundColor: Colors.red),
+                              child: Text('Xóa'),
+                              onPressed: () {
+                                // Gọi hàm service
+                                firestoreService.deleteCategory(userId, cat.id);
+                                Navigator.of(ctx).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    // --- KẾT THÚC PHẦN KÍCH HOẠT ---
+                  ),
+                )),
+                Divider(),
+                ListTile(
+                  leading: Icon(Icons.add, color: Colors.teal),
+                  title: Text('Thêm danh mục mới'),
+                  onTap: () {
+                    _showAddCategoryDialog(context, firestoreService, userId);
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+        Divider(height: 30),
 
-    // --- 3. QUẢN LÝ NGÂN SÁCH (Quan trọng 3) ---
-    _buildSectionTitle(context, 'Quản lý Ngân sách'),
-    StreamBuilder<List<Budget>>(
-      stream: firestoreService.getBudgetsStream(userId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-        final budgets = snapshot.data!;
-        return Column(
-          children: [
-            ...budgets.map((budget) => ListTile(
-              leading: Icon(Icons.pie_chart_outline),
-              // (Để hiển thị Tên danh mục, bạn cần 1 stream khác,
-              // ở đây chúng ta hiển thị ID cho đơn giản)
-              title: Text('Hạn mức: ${oCcy.format(budget.amountLimit)} VNĐ'),
-              subtitle: Text('Danh mục ID: ${budget.categoryId}'),
-              trailing: IconButton(
-                icon: Icon(Icons.delete_outline, color: Colors.red[300]),
-                onPressed: () {
-                  // (Bạn cần thêm hàm deleteBudget vào firestore_service.dart)
-                  // firestoreService.deleteBudget(userId, budget.id);
-                },
-              ),
-            )),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.add, color: Colors.teal),
-              title: Text('Thêm ngân sách mới'),
-              onTap: () {
-                // TODO: Implement add budget dialog
-              },
-            ),
-          ],
-        );
-      },
-    ),
+        // --- 2. QUẢN LÝ TÀI KHOẢN (Quan trọng 1) ---
+        _buildSectionTitle(context, 'Quản lý Tài khoản'),
+        StreamBuilder<List<Account>>(
+          stream: firestoreService.getAccountsStream(userId),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+            final accounts = snapshot.data!;
+            return Column(
+              children: [
+                ...accounts.map((acc) => ListTile(
+                  leading: Icon(Icons.account_balance_wallet_outlined),
+                  title: Text(acc.name),
+                  subtitle: Text('Số dư ban đầu: ${oCcy.format(acc.initialBalance)} VNĐ'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.red[300]),
+                    onPressed: () {
+                      // (Bạn cần thêm hàm deleteAccount vào firestore_service.dart)
+                      // firestoreService.deleteAccount(userId, acc.id);
+                      // Bạn có thể kích hoạt tương tự như trên
+                    },
+                  ),
+                )),
+                Divider(),
+                ListTile(
+                  leading: Icon(Icons.add, color: Colors.teal),
+                  title: Text('Thêm tài khoản mới'),
+                  onTap: () {
+                    _showAddAccountDialog(context, firestoreService, userId);
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+        Divider(height: 30),
+
+        // --- 3. QUẢN LÝ NGÂN SÁCH (Quan trọng 3) ---
+        _buildSectionTitle(context, 'Quản lý Ngân sách'),
+        StreamBuilder<List<Budget>>(
+          stream: firestoreService.getBudgetsStream(userId),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+            final budgets = snapshot.data!;
+            return Column(
+              children: [
+                ...budgets.map((budget) => ListTile(
+                  leading: Icon(Icons.pie_chart_outline),
+                  // (Để hiển thị Tên danh mục, bạn cần 1 stream khác,
+                  // ở đây chúng ta hiển thị ID cho đơn giản)
+                  title: Text('Hạn mức: ${oCcy.format(budget.amountLimit)} VNĐ'),
+                  subtitle: Text('Danh mục ID: ${budget.categoryId}'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete_outline, color: Colors.red[300]),
+                    onPressed: () {
+                      // (Bạn cần thêm hàm deleteBudget vào firestore_service.dart)
+                      // firestoreService.deleteBudget(userId, budget.id);
+                      // Bạn có thể kích hoạt tương tự như trên
+                    },
+                  ),
+                )),
+                Divider(),
+                ListTile(
+                  leading: Icon(Icons.add, color: Colors.teal),
+                  title: Text('Thêm ngân sách mới'),
+                  onTap: () {
+                    // TODO: Implement add budget dialog
+                  },
+                ),
+              ],
+            );
+          },
+        ),
       ],
     );
   }

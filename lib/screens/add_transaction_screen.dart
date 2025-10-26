@@ -26,7 +26,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   // Mặc định là 'Chi tiêu'
   String? _transactionType;
 
-  final DateTime _selectedDate = DateTime.now(); // Giữ nguyên
+  DateTime _selectedDate = DateTime.now(); // Bỏ final để có thể thay đổi
 
   Future<void> _submitData() async {
     final enteredAmount = double.tryParse(_amountController.text);
@@ -64,7 +64,19 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  // (Hàm _selectDate để mở Lịch chọn ngày...)
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +189,18 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-            // (Thêm nút chọn ngày ở đây)
+            SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: _selectDate,
+              icon: Icon(Icons.calendar_today),
+              label: Text('Chọn ngày: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}'),
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -31,16 +31,24 @@ class MyApp extends StatelessWidget {
     // MultiProvider cho phép chúng ta "cung cấp" nhiều dịch vụ
     // cho toàn bộ ứng dụng.
     return MultiProvider(
+
+      // --- BẮT ĐẦU CẬP NHẬT Ở ĐÂY ---
       providers: [
-        // Cung cấp dịch vụ Đăng nhập
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
-        // Cung cấp dịch vụ Database
+        // 1. Cung cấp FirestoreService (nó không phụ thuộc gì cả)
         Provider<FirestoreService>(
           create: (_) => FirestoreService(),
         ),
+
+        // 2. Dùng ProxyProvider để cung cấp AuthService
+        // ProxyProvider sẽ "đọc" FirestoreService (ở trên)
+        // và "tiêm" nó vào hàm khởi tạo của AuthService
+        ProxyProvider<FirestoreService, AuthService>(
+          update: (context, firestoreService, previous) =>
+              AuthService(firestoreService),
+        ),
       ],
+      // --- KẾT THÚC CẬP NHẬT ---
+
       child: MaterialApp(
         title: 'Quản lý Chi tiêu',
         theme: ThemeData(
