@@ -104,6 +104,13 @@ class FirestoreService {
     return _budgetsRef(userId).add(budget.toJson());
   }
 
+  // --- HÀM MỚI ĐƯỢC THÊM VÀO ---
+  /// Xóa một ngân sách dựa trên ID của nó.
+  Future<void> deleteBudget(String userId, String budgetId) {
+    return _budgetsRef(userId).doc(budgetId).delete();
+  }
+  // -----------------------------
+
   // --- 6. HÀM TẠO DỮ LIỆU MẶC ĐỊNH (PHẦN MỚI THÊM) ---
 
   /// Hàm public để tạo dữ liệu mặc định (Danh mục, Tài khoản) cho người dùng mới

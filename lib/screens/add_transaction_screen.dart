@@ -106,7 +106,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
             // --- THAY ĐỔI 3: Thay thế `Row` và `Switch` bằng `DropdownButtonFormField` ---
             DropdownButtonFormField<String>(
-              value: _transactionType,
+              initialValue: _transactionType,
               hint: Text('Chọn Loại Giao dịch'),
               decoration: InputDecoration(
                 labelText: 'Loại giao dịch',
@@ -143,7 +143,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 return DropdownButtonFormField<String>(
                   // Bỏ `initialValue` và dùng `value` để widget tự cập nhật
-                  value: _selectedCategoryId,
+                  initialValue: _selectedCategoryId,
                   hint: Text('Chọn Danh mục'),
                   decoration: InputDecoration( // Thêm style cho nhất quán
                     labelText: 'Danh mục',
@@ -166,7 +166,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 return DropdownButtonFormField<String>(
                   // Bỏ `initialValue` và dùng `value`
-                  value: _selectedAccountId,
+                  initialValue: _selectedAccountId,
                   hint: Text('Chọn Tài khoản'),
                   decoration: InputDecoration( // Thêm style cho nhất quán
                     labelText: 'Tài khoản',
