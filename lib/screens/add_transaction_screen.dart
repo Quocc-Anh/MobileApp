@@ -11,16 +11,22 @@ class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({super.key});
 
   @override
-  AddTransactionScreenState createState() => AddTransactionScreenState();
+  // Đổi tên State cho đúng chuẩn
+  _AddTransactionScreenState createState() => _AddTransactionScreenState();
 }
 
-class AddTransactionScreenState extends State<AddTransactionScreen> {
+// Đổi tên State cho đúng chuẩn
+class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
   String? _selectedCategoryId;
   String? _selectedAccountId;
-  bool _isExpense = true;
-  final DateTime _selectedDate = DateTime.now();
+
+  // --- THAY ĐỔI 1: Thay thế `bool _isExpense` ---
+  // Mặc định là 'Chi tiêu'
+  String? _transactionType;
+
+  final DateTime _selectedDate = DateTime.now(); // Giữ nguyên
 
   Future<void> _submitData() async {
     final enteredAmount = double.tryParse(_amountController.text);
@@ -35,7 +41,9 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
 
     if (userId == null) return;
 
-    final finalAmount = _isExpense ? -enteredAmount : enteredAmount;
+    // --- THAY ĐỔI 2: Cập nhật logic tính toán ---
+    // Nếu là 'expense' (Chi tiêu), biến số tiền thành số âm
+    final finalAmount = (_transactionType == 'expense') ? -enteredAmount : enteredAmount;
 
     final newTx = MyTransaction(
       id: '', // Firestore sẽ tự tạo ID khi .add()
@@ -76,17 +84,45 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
           children: [
             TextField(
               controller: _amountController,
-              decoration: InputDecoration(labelText: 'Số tiền'),
+              decoration: InputDecoration(
+                labelText: 'Số tiền',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               keyboardType: TextInputType.number,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Thu nhập'),
-                Switch(value: _isExpense, onChanged: (val) => setState(() => _isExpense = val)),
-                Text('Chi tiêu'),
+            SizedBox(height: 16), // Thêm khoảng cách
+
+            // --- THAY ĐỔI 3: Thay thế `Row` và `Switch` bằng `DropdownButtonFormField` ---
+            DropdownButtonFormField<String>(
+              value: _transactionType,
+              hint: Text('Chọn Loại Giao dịch'),
+              decoration: InputDecoration(
+                labelText: 'Loại giao dịch',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'expense',
+                  child: Text('Chi tiêu'),
+                ),
+                DropdownMenuItem(
+                  value: 'income',
+                  child: Text('Thu nhập'),
+                ),
               ],
+              onChanged: (val) {
+                if (val != null) {
+                  setState(() {
+                    _transactionType = val;
+                  });
+                }
+              },
             ),
+            // --- KẾT THÚC THAY ĐỔI ---
+
+            SizedBox(height: 16), // Thêm khoảng cách
 
             // --- Dropdown Danh mục (Cốt lõi 2) ---
             StreamBuilder<List<Category>>(
@@ -94,8 +130,13 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 return DropdownButtonFormField<String>(
-                  initialValue: _selectedCategoryId,
+                  // Bỏ `initialValue` và dùng `value` để widget tự cập nhật
+                  value: _selectedCategoryId,
                   hint: Text('Chọn Danh mục'),
+                  decoration: InputDecoration( // Thêm style cho nhất quán
+                    labelText: 'Danh mục',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                   items: snapshot.data!.map((cat) {
                     return DropdownMenuItem(value: cat.id, child: Text(cat.name));
                   }).toList(),
@@ -104,14 +145,21 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
               },
             ),
 
+            SizedBox(height: 16), // Thêm khoảng cách
+
             // --- Dropdown Tài khoản (Quan trọng 1) ---
             StreamBuilder<List<Account>>(
               stream: firestoreService.getAccountsStream(userId),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
                 return DropdownButtonFormField<String>(
-                  initialValue: _selectedAccountId,
+                  // Bỏ `initialValue` và dùng `value`
+                  value: _selectedAccountId,
                   hint: Text('Chọn Tài khoản'),
+                  decoration: InputDecoration( // Thêm style cho nhất quán
+                    labelText: 'Tài khoản',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                   items: snapshot.data!.map((acc) {
                     return DropdownMenuItem(value: acc.id, child: Text(acc.name));
                   }).toList(),
@@ -120,9 +168,14 @@ class AddTransactionScreenState extends State<AddTransactionScreen> {
               },
             ),
 
+            SizedBox(height: 16), // Thêm khoảng cách
+
             TextField(
               controller: _noteController,
-              decoration: InputDecoration(labelText: 'Ghi chú'),
+              decoration: InputDecoration(
+                labelText: 'Ghi chú',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
             // (Thêm nút chọn ngày ở đây)
           ],

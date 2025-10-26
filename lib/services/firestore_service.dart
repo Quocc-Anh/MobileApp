@@ -86,7 +86,15 @@ class FirestoreService {
     return _categoriesRef(userId).add({'name': name});
   }
 
-  // (Bạn có thể tự thêm hàm updateCategory và deleteCategory ở đây)
+  // --- PHẦN ĐƯỢC THÊM VÀO ---
+  /// Xóa một danh mục dựa trên ID của nó.
+  Future<void> deleteCategory(String userId, String categoryId) {
+    return _categoriesRef(userId).doc(categoryId).delete();
+  }
+  // -----------------------------
+
+  // (Bạn có thể tự thêm hàm updateCategory ở đây)
+
 
   // --- 4. ACCOUNTS (Tài khoản/Ví) ---
   // (Chức năng Quan trọng 1)
