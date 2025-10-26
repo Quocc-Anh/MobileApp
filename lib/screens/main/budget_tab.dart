@@ -133,7 +133,7 @@ class BudgetTab extends StatelessWidget {
                             // Thanh tiến độ
                             LinearProgressIndicator(
                               value: displayProgress, // Giá trị từ 0.0 đến 1.0
-                              backgroundColor: progressColor.withOpacity(0.2),
+                              backgroundColor: progressColor.withAlpha(51),
                               valueColor: AlwaysStoppedAnimation<Color>(progressColor),
                               minHeight: 8, // Độ dày của thanh
                               borderRadius: BorderRadius.circular(4),
@@ -166,7 +166,7 @@ class BudgetTab extends StatelessWidget {
                                     'Còn lại: ${oCcy.format(budget.amountLimit - totalSpentForBudget)}',
                                     style: TextStyle(
                                       fontSize: 13,
-                                      color: theme.colorScheme.onSurfaceVariant.withOpacity(0.8),
+                                      color: theme.colorScheme.onSurfaceVariant.withAlpha(204),
                                     ),
                                   ),
                               ],

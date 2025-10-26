@@ -158,9 +158,9 @@ class _DashboardTabState extends State<DashboardTab> {
                             ),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundColor: isExpense
-                                    ? colorScheme.errorContainer.withOpacity(0.5)
-                                    : Colors.green[100],
+                backgroundColor: isExpense
+                  ? colorScheme.errorContainer.withAlpha(128)
+                  : Colors.green[100],
                                 child: Icon(
                                   isExpense
                                       ? Icons.arrow_downward
@@ -193,7 +193,7 @@ class _DashboardTabState extends State<DashboardTab> {
                                     '${DateFormat.yMd('vi_VN').format(tx.date)} • $accountName', // Thêm Tên tài khoản
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: colorScheme.onSurfaceVariant.withOpacity(0.7), // Mờ hơn chút
+                                      color: colorScheme.onSurfaceVariant.withAlpha(179), // Mờ hơn chút
                                     ),
                                   ),
                                 ],

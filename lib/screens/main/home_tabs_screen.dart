@@ -37,19 +37,35 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trang chủ'),
-        // --- THÊM NÚT "+" VÀO ACTIONS ---
+        title: Text('AAA Money'),
         actions: [
           IconButton(
             icon: Icon(Icons.add_circle_outline), // Icon Add
             tooltip: 'Thêm giao dịch mới', // Chú thích khi hover
             onPressed: () {
-              // Logic điều hướng giữ nguyên như FAB cũ
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AddTransactionScreen(),
-                  fullscreenDialog: true,
-                ),
+              // --- SỬA LẠI LOGIC: DÙNG showDialog ---
+              showDialog(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  // Trả về widget AddTransactionScreen bên trong một Dialog
+                  return Dialog(
+                    // Bo góc dialog
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    // --- BẮT ĐẦU SỬA ---
+                    // Bọc AddTransactionScreen trong SingleChildScrollView và Padding
+                    // KHÔNG dùng SizedBox nữa để tránh khoảng trống thừa
+                    child: SingleChildScrollView( // Cho phép cuộn nếu cần
+                      child: Padding(
+                        // Bạn có thể để padding là zero hoặc một giá trị nhỏ
+                        padding: EdgeInsets.zero,
+                        child: AddTransactionScreen(),
+                      ),
+                    ),
+                    // --- KẾT THÚC SỬA ---
+                  );
+                },
               );
             },
           ),
@@ -58,54 +74,45 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      // --- XÓA FAB VÀ VỊ TRÍ CỦA NÓ ---
-      // floatingActionButton: FloatingActionButton(...)
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // FAB và vị trí đã bị xóa
 
-      // --- BottomAppBar đã được cập nhật ---
+      // BottomAppBar giữ nguyên
       bottomNavigationBar: BottomAppBar(
-        // Bỏ shape và notchMargin
         child: SizedBox(
           height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround, // Phân bổ đều 5 tab
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              // Tab 0
               _buildBottomNavItem(
                 context,
                 icon: Icons.dashboard_outlined,
                 label: 'Tổng quan',
                 index: 0,
               ),
-              // Tab 1
               _buildBottomNavItem(
                 context,
                 icon: Icons.pie_chart_outline,
                 label: 'Báo cáo',
                 index: 1,
               ),
-              // Tab 2 (Ngân sách)
               _buildBottomNavItem(
                 context,
                 icon: Icons.account_balance_wallet_outlined,
                 label: 'Ngân sách',
                 index: 2,
               ),
-              // Tab 3 (Quản lý)
               _buildBottomNavItem(
                 context,
                 icon: Icons.list_alt_outlined,
                 label: 'Quản lý',
                 index: 3,
               ),
-              // Tab 4 (Cài đặt)
               _buildBottomNavItem(
                 context,
                 icon: Icons.settings_outlined,
                 label: 'Cài đặt',
                 index: 4,
               ),
-              // Đã xóa SizedBox trống
             ],
           ),
         ),

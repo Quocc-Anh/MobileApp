@@ -10,7 +10,9 @@ import '../models/budget.dart';
  * ===================================================================
 */
 class FirestoreService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  // Lazily resolve the FirebaseFirestore instance to avoid accessing
+  // Firebase before it's initialized (helps in tests).
+  FirebaseFirestore get _db => FirebaseFirestore.instance;
 
   // --- 1. ĐƯỜNG DẪN HELPER ---
 

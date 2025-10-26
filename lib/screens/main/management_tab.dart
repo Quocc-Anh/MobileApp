@@ -135,7 +135,7 @@ class ManagementTab extends StatelessWidget {
                           .where((cat) => cat.name.toLowerCase() != 'thu nhập')
                           .toList();
                       return DropdownButtonFormField<String>(
-                        value: _selectedCategoryId,
+                        initialValue: _selectedCategoryId,
                         hint: Text('Chọn danh mục chi tiêu'),
                         items: categories.map((cat) {
                           return DropdownMenuItem(value: cat.id, child: Text(cat.name));
