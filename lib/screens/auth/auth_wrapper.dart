@@ -21,7 +21,7 @@ class AuthWrapper extends StatelessWidget {
           // Nếu user != null (đã đăng nhập), hiển thị HomeTabsScreen
           return user == null ? LoginScreen() : HomeTabsScreen();
         }
-        // Đang kiểm tra...
+
         return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),

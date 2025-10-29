@@ -14,7 +14,6 @@ class ManagementTab extends StatelessWidget {
   const ManagementTab({super.key});
 
   Widget _buildSectionTitle(BuildContext context, String title) {
-    // ... (Giữ nguyên hàm này)
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
@@ -28,7 +27,6 @@ class ManagementTab extends StatelessWidget {
   }
 
   Future<void> _showAddCategoryDialog(BuildContext context, FirestoreService firestoreService, String userId) async {
-    // ... (Giữ nguyên hàm này)
     final nameController = TextEditingController();
 
     return showDialog<void>(
@@ -60,7 +58,6 @@ class ManagementTab extends StatelessWidget {
   }
 
   Future<void> _showAddAccountDialog(BuildContext context, FirestoreService firestoreService, String userId) async {
-    // ... (Giữ nguyên hàm này)
     final nameController = TextEditingController();
     final balanceController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
@@ -111,7 +108,6 @@ class ManagementTab extends StatelessWidget {
   }
 
   Future<void> _showAddBudgetDialog(BuildContext context, FirestoreService service, String userId) async {
-    // ... (Giữ nguyên hàm này)
     final amountController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
     String? _selectedCategoryId;
@@ -217,7 +213,6 @@ class ManagementTab extends StatelessWidget {
         ),
         SizedBox(height: 16),
 
-        // --- 1. QUẢN LÝ DANH MỤC (Giữ nguyên) ---
         _buildSectionTitle(context, 'Quản lý Danh mục'),
         StreamBuilder<List<Category>>(
           stream: firestoreService.getCategoriesStream(userId),
@@ -271,7 +266,6 @@ class ManagementTab extends StatelessWidget {
         ),
         Divider(height: 30),
 
-        // --- 2. QUẢN LÝ TÀI KHOẢN (ĐÃ KÍCH HOẠT NÚT XÓA) ---
         _buildSectionTitle(context, 'Quản lý Tài khoản'),
         StreamBuilder<List<Account>>(
           stream: firestoreService.getAccountsStream(userId),
@@ -286,9 +280,7 @@ class ManagementTab extends StatelessWidget {
                   subtitle: Text('Số dư ban đầu: ${oCcy.format(acc.initialBalance)} VNĐ'),
                   trailing: IconButton(
                     icon: Icon(Icons.delete_outline, color: Colors.red[300]),
-                    // --- BẮT ĐẦU KÍCH HOẠT ---
                     onPressed: () {
-                      // Thêm dialog xác nhận trước khi xóa
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
@@ -312,7 +304,6 @@ class ManagementTab extends StatelessWidget {
                         ),
                       );
                     },
-                    // --- KẾT THÚC KÍCH HOẠT ---
                   ),
                 )),
                 Divider(),
@@ -329,7 +320,6 @@ class ManagementTab extends StatelessWidget {
         ),
         Divider(height: 30),
 
-        // --- 3. QUẢN LÝ NGÂN SÁCH (Giữ nguyên) ---
         _buildSectionTitle(context, 'Quản lý Ngân sách'),
         StreamBuilder<List<Category>>(
             stream: firestoreService.getCategoriesStream(userId),

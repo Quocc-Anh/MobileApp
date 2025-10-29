@@ -5,7 +5,7 @@ class MyTransaction {
   final String categoryId;
   final String accountId;
   final String note;
-  final double amount; // Âm là Chi, Dương là Thu
+  final double amount;
   final DateTime date;
 
   MyTransaction({
@@ -17,18 +17,18 @@ class MyTransaction {
     required this.date,
   });
 
-  // Chuyển từ đối tượng Dart sang JSON (để gửi lên Firestore)
+
   Map<String, dynamic> toJson() {
     return {
       'categoryId': categoryId,
       'accountId': accountId,
       'note': note,
       'amount': amount,
-      'date': Timestamp.fromDate(date), // Chuyển DateTime sang Timestamp
+      'date': Timestamp.fromDate(date),
     };
   }
 
-  // Chuyển từ JSON (lấy từ Firestore) sang đối tượng Dart
+
   factory MyTransaction.fromJson(String id, Map<String, dynamic> json) {
     return MyTransaction(
       id: id,
@@ -36,7 +36,7 @@ class MyTransaction {
       accountId: json['accountId'] as String,
       note: json['note'] as String,
       amount: (json['amount'] as num).toDouble(),
-      date: (json['date'] as Timestamp).toDate(), // Chuyển Timestamp sang DateTime
+      date: (json['date'] as Timestamp).toDate(),
     );
   }
 }

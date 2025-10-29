@@ -124,7 +124,7 @@ class _DashboardTabState extends State<DashboardTab> {
                       ),
                     ),
 
-                    // --- Lịch sử Giao dịch (ĐÃ CẬP NHẬT ĐỂ HIỂN THỊ TÊN) ---
+
                     Expanded(
                       child: transactions.isEmpty
                           ? Center(

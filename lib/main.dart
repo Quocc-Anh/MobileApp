@@ -9,15 +9,10 @@ import 'screens/auth/auth_wrapper.dart';
 import 'services/auth_service.dart';
 import 'services/firestore_service.dart';
 
-
 void main() async {
-  // Đảm bảo Flutter sẵn sàng
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Khởi tạo Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await initializeDateFormatting('vi_VN', null);
   runApp(const MyApp());
@@ -28,40 +23,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // MultiProvider cho phép chúng ta "cung cấp" nhiều dịch vụ
-    // cho toàn bộ ứng dụng.
     return MultiProvider(
-
-      // --- BẮT ĐẦU CẬP NHẬT Ở ĐÂY ---
       providers: [
-        // 1. Cung cấp FirestoreService (nó không phụ thuộc gì cả)
-        Provider<FirestoreService>(
-          create: (_) => FirestoreService(),
-        ),
-
-        // 2. Dùng ProxyProvider để cung cấp AuthService
-        // ProxyProvider sẽ "đọc" FirestoreService (ở trên)
-        // và "tiêm" nó vào hàm khởi tạo của AuthService
+        Provider<FirestoreService>(create: (_) => FirestoreService()),
         ProxyProvider<FirestoreService, AuthService>(
-          update: (context, firestoreService, previous) =>
-              AuthService(firestoreService),
+          update: (context, firestoreService, previous) => AuthService(firestoreService),
         ),
       ],
-      // --- KẾT THÚC CẬP NHẬT ---
-
       child: MaterialApp(
         title: 'Quản lý Chi tiêu',
         theme: ThemeData(
-          useMaterial3: true, // <-- Bật Material 3
-          colorSchemeSeed: Colors.teal, // <-- Chọn màu chủ đạo
+          useMaterial3: true,
+          colorSchemeSeed: Colors.teal,
           brightness: Brightness.light,
-          // Áp dụng font chữ mới cho toàn app
-          textTheme: GoogleFonts.interTextTheme(
-            Theme.of(context).textTheme,
+          scaffoldBackgroundColor: Colors.white,
+          textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFFF0F0F0),
+            foregroundColor: Colors.black,
+            elevation: 0,
+          ),
+          bottomAppBarTheme: const BottomAppBarThemeData(
+            color: Color(0xFFF0F0F0),
+            elevation: 0,
           ),
         ),
-
-        darkTheme: ThemeData( // <-- (Tùy chọn) Thêm theme tối
+        darkTheme: ThemeData(
           useMaterial3: true,
           colorSchemeSeed: Colors.teal,
           brightness: Brightness.dark,
@@ -70,7 +57,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
         debugShowCheckedModeBanner: false,
-        // AuthWrapper sẽ quyết định hiển thị màn hình Đăng nhập hay Trang chủ
         home: AuthWrapper(),
       ),
     );

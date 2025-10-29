@@ -8,7 +8,6 @@ import '../../services/firestore_service.dart';
 import '../../models/transaction.dart';
 import '../../models/category.dart';
 
-// Đổi từ StatelessWidget sang StatefulWidget để quản lý ngày được chọn
 class ReportsTab extends StatefulWidget {
   const ReportsTab({super.key});
 
@@ -76,7 +75,6 @@ class _ReportsTabState extends State<ReportsTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- TIÊU ĐỀ VÀ BỘ CHỌN THÁNG (MỚI) ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -92,7 +90,6 @@ class _ReportsTabState extends State<ReportsTab> {
                   ),
                   SizedBox(height: 16),
 
-                  // --- TỔNG CHI TIÊU THÁNG (MỚI) ---
                   Card(
                     elevation: 2,
                     child: Padding(
@@ -126,7 +123,6 @@ class _ReportsTabState extends State<ReportsTab> {
 
                   SizedBox(height: 20),
 
-                  // --- BIỂU ĐỒ TRÒN (CHI TIÊU THEO DANH MỤC) ---
                   _buildCategoryPieChartCard(
                     context,
                     expensesThisMonth,
@@ -135,7 +131,6 @@ class _ReportsTabState extends State<ReportsTab> {
 
                   SizedBox(height: 20),
 
-                  // --- BIỂU ĐỒ CỘT (CHI TIÊU HÀNG NGÀY) ---
                   _buildDailyBarChartCard(
                     context,
                     expensesThisMonth,
@@ -150,27 +145,22 @@ class _ReportsTabState extends State<ReportsTab> {
     );
   }
 
-  // --- HÀM CHỌN THÁNG (MỚI) ---
   Future<void> _selectMonth(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedMonth,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
-      // ĐÃ XÓA "initialDatePickerMode" VÀ "builder"
     );
 
-    // Logic cập nhật giữ nguyên
     if (picked != null && picked != _selectedMonth) {
       setState(() {
-        // Dù bạn chọn ngày 25, nó vẫn sẽ lấy tháng của ngày đó
         _selectedMonth = picked;
       });
     }
   }
 
 
-  // --- WIDGET BIỂU ĐỒ TRÒN (ĐÃ CHỈNH SỬA NHỎ HƠN NỮA) ---
   Widget _buildCategoryPieChartCard(
       BuildContext context,
       List<MyTransaction> expenses,
@@ -209,11 +199,10 @@ class _ReportsTabState extends State<ReportsTab> {
       return PieChartSectionData(
         color: color,
         value: amount,
-        // Chỉ hiển thị % nếu miếng bánh đủ lớn (>= 7%)
         title: percentage >= 7 ? '${percentage.toStringAsFixed(0)}%' : '',
-        radius: 50, // <-- Giảm bán kính xuống 50
+        radius: 50,
         titleStyle: TextStyle(
-          fontSize: 10, // <-- Giảm cỡ chữ
+          fontSize: 10,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           shadows: [Shadow(color: Colors.black, blurRadius: 2)],
@@ -237,31 +226,26 @@ class _ReportsTabState extends State<ReportsTab> {
               'Tổng chi: ${oCcy.format(totalSpending)} VNĐ',
               style: theme.textTheme.titleMedium?.copyWith(color: Colors.red[700]),
             ),
-            SizedBox(height: 16), // <-- Giảm khoảng cách
+            SizedBox(height: 16),
 
-            // --- THAY ĐỔI CHÍNH Ở ĐÂY ---
-            // Thay vì AspectRatio, dùng SizedBox với chiều cao cố định
             SizedBox(
-              height: 150, // <-- Đặt chiều cao cố định (150px)
+              height: 150,
               child: PieChart(
                 PieChartData(
                   sections: pieSections,
                   borderData: FlBorderData(show: false),
                   sectionsSpace: 2,
-                  centerSpaceRadius: 30, // <-- Giảm bán kính lỗ giữa
+                  centerSpaceRadius: 30,
                   pieTouchData: PieTouchData(
                     touchCallback: (event, pieTouchResponse) {
-                      // (Logic khi chạm vào, có thể làm sau)
                     },
                   ),
                 ),
               ),
             ),
-            // --- KẾT THÚC THAY ĐỔI ---
 
-            SizedBox(height: 16), // <-- Giảm khoảng cách
+            SizedBox(height: 16),
 
-            // Chú thích (Wrap tự động xuống dòng)
             Wrap(
               spacing: 12,
               runSpacing: 8,
@@ -280,7 +264,6 @@ class _ReportsTabState extends State<ReportsTab> {
     );
   }
 
-  // --- WIDGET BIỂU ĐỒ CỘT ---
   Widget _buildDailyBarChartCard(
       BuildContext context,
       List<MyTransaction> expenses,
@@ -331,15 +314,14 @@ class _ReportsTabState extends State<ReportsTab> {
               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 24),
-            // Đảm bảo Biểu đồ cột có kích thước linh hoạt
             AspectRatio(
-              aspectRatio: 1.6, // Tỉ lệ khung hình (width/height)
+              aspectRatio: 1.6,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 32),
                   child: SizedBox(
-                    width: daysInMonth * 22.0, // Đảm bảo đủ rộng để cuộn
+                    width: daysInMonth * 22.0,
                     child: BarChart(
                       BarChartData(
                         maxY: maxY,
@@ -377,7 +359,6 @@ class _ReportsTabState extends State<ReportsTab> {
     );
   }
 
-  // Helper cho Chú thích (Legend) của Biểu đồ tròn
   Widget _buildLegendItem(Color color, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -396,7 +377,6 @@ class _ReportsTabState extends State<ReportsTab> {
     );
   }
 
-  // Helper cho Trục (Axis) của Biểu đồ cột
   FlTitlesData _buildTitlesData() {
     return FlTitlesData(
       topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -406,7 +386,6 @@ class _ReportsTabState extends State<ReportsTab> {
           showTitles: true,
           getTitlesWidget: (dayValue, meta) {
             String text = dayValue.toInt().toString();
-            // Chỉ hiện ngày chẵn (hoặc 1, 31)
             if (dayValue.toInt() % 2 != 0 && dayValue.toInt() != 1 && dayValue.toInt() != 31 ) {
               return Container();
             }

@@ -1,4 +1,3 @@
-// lib/screens/main/settings_tab.dart (FILE MỚI)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,14 +9,12 @@ class SettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
-    // Lấy thông tin người dùng hiện tại từ Firebase Auth
     final User? user = FirebaseAuth.instance.currentUser;
     final theme = Theme.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        // --- Phần Thông tin tài khoản ---
         Text(
           'Tài khoản',
           style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -35,14 +32,11 @@ class SettingsTab extends StatelessWidget {
           ),
         ),
 
-        // (Bạn có thể thêm các cài đặt khác ở đây, ví dụ: Nút Đổi mật khẩu)
 
         SizedBox(height: 30),
 
-        // --- Phần Đăng xuất ---
         Card(
           elevation: 0,
-          // Dùng màu nền lỗi (error) của Material 3
           color: theme.colorScheme.errorContainer,
           child: ListTile(
             leading: Icon(Icons.logout, color: theme.colorScheme.onErrorContainer),

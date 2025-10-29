@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLogin = true; // Chuyển đổi giữa Đăng nhập và Đăng ký
+  bool _isLogin = true;
   String _errorMessage = '';
 
   Future<void> _submit() async {
@@ -25,7 +25,7 @@ class LoginScreenState extends State<LoginScreen> {
       } else {
         await authService.signUp(_emailController.text, _passwordController.text);
       }
-      // AuthWrapper sẽ tự động xử lý điều hướng
+
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();

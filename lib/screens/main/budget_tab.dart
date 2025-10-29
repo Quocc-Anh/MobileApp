@@ -1,4 +1,3 @@
-// lib/screens/main/budget_tab.dart (FILE MỚI)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +6,7 @@ import '../../services/auth_service.dart';
 import '../../services/firestore_service.dart';
 import '../../models/category.dart';
 import '../../models/budget.dart';
-import '../../models/transaction.dart'; // <-- Bắt buộc import
+import '../../models/transaction.dart';
 
 class BudgetTab extends StatelessWidget {
   const BudgetTab({super.key});
@@ -24,7 +23,7 @@ class BudgetTab extends StatelessWidget {
       return Center(child: Text('Lỗi: Không tìm thấy người dùng.'));
     }
 
-    // Lấy ngày đầu và cuối của tháng HIỆN TẠI
+
     final now = DateTime.now();
     final firstDayOfMonth = DateTime(now.year, now.month, 1);
     final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
@@ -39,7 +38,7 @@ class BudgetTab extends StatelessWidget {
             return StreamBuilder<List<MyTransaction>>(
               stream: firestoreService.getTransactionsStream(userId),
               builder: (context, txSnapshot) {
-                // Xử lý trạng thái loading
+
                 if (!catSnapshot.hasData || !budgetSnapshot.hasData || !txSnapshot.hasData) {
                   return Center(child: CircularProgressIndicator());
                 }
@@ -48,18 +47,17 @@ class BudgetTab extends StatelessWidget {
                 final budgets = budgetSnapshot.data!;
                 final allTransactions = txSnapshot.data!;
 
-                // Tạo Map để tra cứu tên danh mục
+
                 final categoryMap = {for (var cat in categories) cat.id: cat.name};
 
-                // Lọc giao dịch CHI TIÊU trong THÁNG NÀY
+
                 final expensesThisMonth = allTransactions.where((tx) {
                   return tx.amount < 0 &&
                       !tx.date.isBefore(firstDayOfMonth) &&
                       !tx.date.isAfter(lastDayOfMonth);
                 }).toList();
 
-                // Lọc ngân sách chỉ áp dụng cho tháng này
-                // (Giả sử Budget.date lưu ngày đầu tháng)
+
                 final budgetsThisMonth = budgets.where((b) {
                   final budgetMonth = b.date.toDate();
                   return budgetMonth.year == now.year && budgetMonth.month == now.month;
@@ -110,7 +108,7 @@ class BudgetTab extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Tên Danh mục và Hạn mức
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

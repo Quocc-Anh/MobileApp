@@ -95,15 +95,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final userId = authService.currentUserId!;
     final theme = Theme.of(context);
 
-    // --- BẮT ĐẦU SỬA: Bọc nội dung trong SafeArea và giảm Padding ---
-    return SafeArea( // Đảm bảo nội dung không bị che khuất (ví dụ bởi notch)
+
+    return SafeArea(
       child: Padding(
-        // Giảm padding tổng thể của sheet
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min, // Để Column co lại theo nội dung
           children: [
-            // --- TIÊU ĐỀ SHEET (Tùy chọn) ---
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
@@ -111,9 +109,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
-            // --- KẾT THÚC TIÊU ĐỀ ---
 
-            // Trường nhập liệu
             TextField(
               controller: _amountController,
               decoration: InputDecoration(
@@ -163,7 +159,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 );
               },
             ),
-            SizedBox(height: 12), // <-- Giảm khoảng cách
+            SizedBox(height: 12),
 
             StreamBuilder<List<Account>>(
               stream: firestoreService.getAccountsStream(userId),
@@ -184,7 +180,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 );
               },
             ),
-            SizedBox(height: 12), // <-- Giảm khoảng cách
+            SizedBox(height: 12),
 
             TextField(
               controller: _noteController,
@@ -193,7 +189,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-            SizedBox(height: 12), // <-- Giảm khoảng cách
+            SizedBox(height: 12),
 
             TextField(
               controller: _dateController,
@@ -230,6 +226,5 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
       ),
     );
-    // --- KẾT THÚC SỬA ---
   }
 }

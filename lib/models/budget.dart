@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Budget {
   final String id;
-  final String categoryId; // ID của danh mục được áp dụng ngân sách
-  final double amountLimit; // Hạn mức chi tiêu
-  final Timestamp date;     // Đại diện cho tháng áp dụng (VD: 2025-10-01)
+  final String categoryId;
+  final double amountLimit;
+  final Timestamp date;
 
   Budget({
     required this.id,
@@ -13,7 +13,7 @@ class Budget {
     required this.date,
   });
 
-  // Chuyển từ đối tượng Dart sang JSON (để gửi lên Firestore)
+
   Map<String, dynamic> toJson() {
     return {
       'categoryId': categoryId,
@@ -22,7 +22,7 @@ class Budget {
     };
   }
 
-  // Chuyển từ JSON (lấy từ Firestore) sang đối tượng Dart
+
   factory Budget.fromJson(String id, Map<String, dynamic> json) {
     return Budget(
       id: id,

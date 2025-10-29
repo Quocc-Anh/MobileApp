@@ -16,13 +16,13 @@ class HomeTabsScreen extends StatefulWidget {
 class _HomeTabsScreenState extends State<HomeTabsScreen> {
   int _selectedIndex = 0; // Tab hiện tại
 
-  // Danh sách các Widget cho từng tab (Đã có 5 tab)
+
   static const List<Widget> _widgetOptions = <Widget>[
-    DashboardTab(),   // Index 0: Tổng quan
-    ReportsTab(),     // Index 1: Báo cáo
-    BudgetTab(),      // Index 2: Ngân sách
-    ManagementTab(),  // Index 3: Quản lý
-    SettingsTab(),    // Index 4: Cài đặt
+    DashboardTab(),
+    ReportsTab(),
+    BudgetTab(),
+    ManagementTab(),
+    SettingsTab(),
   ];
 
   void _onItemTapped(int index) {
@@ -41,27 +41,21 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
             icon: Icon(Icons.add_circle_outline), // Icon Add
             tooltip: 'Thêm giao dịch mới', // Chú thích khi hover
             onPressed: () {
-              // --- SỬA LẠI LOGIC: DÙNG showDialog ---
+
               showDialog(
                 context: context,
                 builder: (BuildContext dialogContext) {
                   // Trả về widget AddTransactionScreen bên trong một Dialog
                   return Dialog(
-                    // Bo góc dialog
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
                     ),
-                    // --- BẮT ĐẦU SỬA ---
-                    // Bọc AddTransactionScreen trong SingleChildScrollView và Padding
-                    // KHÔNG dùng SizedBox nữa để tránh khoảng trống thừa
-                    child: SingleChildScrollView( // Cho phép cuộn nếu cần
+                    child: SingleChildScrollView(
                       child: Padding(
-                        // Bạn có thể để padding là zero hoặc một giá trị nhỏ
                         padding: EdgeInsets.zero,
                         child: AddTransactionScreen(),
                       ),
                     ),
-                    // --- KẾT THÚC SỬA ---
                   );
                 },
               );
@@ -72,9 +66,7 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      // FAB và vị trí đã bị xóa
 
-      // BottomAppBar giữ nguyên
       bottomNavigationBar: BottomAppBar(
         child: SizedBox(
           height: 60,
@@ -118,7 +110,6 @@ class _HomeTabsScreenState extends State<HomeTabsScreen> {
     );
   }
 
-  // Hàm helper _buildBottomNavItem giữ nguyên
   Widget _buildBottomNavItem(BuildContext context, {required IconData icon, required String label, required int index}) {
     final bool isSelected = _selectedIndex == index;
     final Color activeColor = Theme.of(context).colorScheme.primary;
